@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10172b">
+  <title>Smart Job Scheduler | AOS Mini Project</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-lockup">
+        <div class="brand-mark"><span></span><span></span><span></span></div>
+        <div><div class="brand-name">sched<span>ulr</span></div><div class="brand-sub">SYSTEMS LAB / AOS</div></div>
+      </div>
+      <div class="side-label">WORKSPACE</div>
+      <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Overview <span class="nav-dot"></span></a>
+      <a class="nav-item" href="#queue"><span class="nav-icon">≡</span> Job queue</a>
+      <a class="nav-item" href="#timeline"><span class="nav-icon">▤</span> Execution timeline</a>
+      <a class="nav-item" href="#benchmark"><span class="nav-icon">⌁</span> Benchmark lab</a>
+      <div class="sidebar-spacer"></div>
+      <div class="side-card">
+        <div class="side-card-icon">✳</div>
+        <div class="side-card-title">Adaptive engine</div>
+        <p>Compare policies, inspect trade-offs, and let the recommendation engine choose a starting point.</p>
+        <span class="side-card-tag">6 ALGORITHMS</span>
+      </div>
+      <div class="sidebar-footer"><span class="status-light"></span> LOCAL MODE <span class="footer-version">v1.0.0</span></div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <div class="mobile-brand">sched<span>ulr</span></div>
+        <div class="breadcrumb">Workspace <span>/</span> <strong>Scheduling overview</strong></div>
+        <div class="top-actions">
+          <div class="backend-pill"><span class="pulse"></span><span id="backendStatus">CONNECTING TO C ENGINE</span></div>
+          <button class="icon-button" id="refreshBtn" title="Refresh data" aria-label="Refresh data">↻</button>
+        </div>
+      </header>
+
+      <section class="page-heading">
+        <div>
+          <div class="eyebrow">OPERATING SYSTEMS / CPU SCHEDULING</div>
+          <h1>Smart Job <span>Scheduler</span></h1>
+          <p class="page-subtitle">A live scheduling workbench. Create workloads, run CPU policies, and understand the performance behind every decision.</p>
+        </div>
+        <div class="heading-actions">
+          <button class="btn btn-ghost" id="resetBtn">↺ Restore demo data</button>
+          <button class="btn btn-primary" id="recommendBtn"><span>✦</span> Smart recommend</button>
+        </div>
+      </section>
+
+      <section class="metric-grid" aria-label="Performance metrics">
+        <article class="metric-card metric-indigo"><div class="metric-top"><span class="metric-label">TOTAL JOBS</span><span class="metric-icon">▦</span></div><div class="metric-value" id="totalJobs">—</div><div class="metric-foot"><span class="metric-dot"></span> Active workload queue</div></article>
+        <article class="metric-card metric-cyan"><div class="metric-top"><span class="metric-label">AVERAGE WAIT</span><span class="metric-icon">◷</span></div><div class="metric-value"><span id="avgWaiting">—</span><small> units</small></div><div class="metric-foot">Lower is generally better</div></article>
+        <article class="metric-card metric-violet"><div class="metric-top"><span class="metric-label">AVG TURNAROUND</span><span class="metric-icon">↗</span></div><div class="metric-value"><span id="avgTurnaround">—</span><small> units</small></div><div class="metric-foot">Arrival to completion</div></article>
+        <article class="metric-card metric-green"><div class="metric-top"><span class="metric-label">CPU UTILIZATION</span><span class="metric-icon">◉</span></div><div class="metric-value"><span id="cpuUtilization">—</span><small>%</small></div><div class="metric-foot"><span class="util-track"><span id="utilTrack"></span></span> Busy time ratio</div></article>
+      </section>
+      <div class="metric-note">* Time values are simulation time units (not real milliseconds). Metrics update after each schedule run.</div>
+
+      <section class="workspace-grid">
+        <div class="panel scheduler-panel">
+          <div class="panel-head"><div><div class="eyebrow">CONTROL CENTER</div><h2>Run a scheduling policy</h2></div><span class="panel-index">01 / EXECUTE</span></div>
+          <div class="control-row">
+            <label class="field-label" for="algorithmSelect">SCHEDULING ALGORITHM</label>
+            <div class="select-wrap"><select id="algorithmSelect"><option value="FCFS">First Come, First Served (FCFS)</option><option value="SJF">Shortest Job First (SJF)</option><option value="SRTF">Shortest Remaining Time (SRTF)</option><option value="PRIORITY">Priority Scheduling</option><option value="RR">Round Robin (RR)</option><option value="EDF">Earliest Deadline First (EDF)</option></select><span>⌄</span></div>
+            <div class="quantum-field" id="quantumField"><label class="field-label" for="quantumInput">TIME QUANTUM</label><input id="quantumInput" type="number" min="1" max="50" value="2"></div>
+            <button class="btn btn-primary run-btn" id="runBtn">▶ Run schedule</button>
+          </div>
+          <div class="algorithm-hint" id="algorithmHint"><span class="hint-icon">i</span><span>FCFS executes jobs in arrival order. It is simple and fair, but long jobs can delay shorter ones.</span></div>
+          <div class="result-strip"><span class="result-label">LAST EXECUTION</span><span id="lastAlgorithm">Not run yet</span><span class="result-divider"></span><span id="lastMakespan">Makespan: —</span><span class="result-spacer"></span><span class="run-state"><span class="status-light"></span> READY</span></div>
+        </div>
+
+        <div class="panel recommendation-panel">
+          <div class="panel-head"><div><div class="eyebrow">DECISION SUPPORT</div><h2>Adaptive insight</h2></div><span class="sparkle">✧</span></div>
+          <div class="recommend-box"><div class="recommend-icon">✦</div><div><div class="recommend-caption">RECOMMENDED POLICY</div><div class="recommend-value" id="recommendValue">Analyze workload</div></div><span class="recommend-arrow">↗</span></div>
+          <p class="recommend-reason" id="recommendReason">The engine will inspect deadlines, priority spread, and job burst variation to suggest a suitable policy.</p>
+          <button class="text-button" id="applyRecommendation">Apply recommendation <span>→</span></button>
+        </div>
+      </section>
+
+      <section class="panel timeline-panel" id="timeline">
+        <div class="panel-head timeline-head"><div><div class="eyebrow">CPU EXECUTION MAP</div><h2>Gantt timeline <span class="live-tag">LIVE RESULT</span></h2><p class="panel-subtitle">Visual view of how the CPU is allocated across jobs.</p></div><div class="timeline-legend"><span><i class="legend-job"></i> Job execution</span><span><i class="legend-idle"></i> CPU idle</span></div></div>
+        <div id="ganttEmpty" class="empty-state"><div class="empty-illustration">▥</div><strong>No execution timeline yet</strong><span>Choose a policy and run the scheduler to render a Gantt chart.</span></div>
+        <div id="ganttWrap" class="gantt-wrap hidden"><div class="gantt-axis" id="ganttAxis"></div><div class="gantt-track" id="ganttTrack"></div><div class="gantt-foot" id="ganttFoot"></div></div>
+      </section>
+
+      <section class="lower-grid">
+        <div class="panel queue-panel" id="queue">
+          <div class="panel-head"><div><div class="eyebrow">WORKLOAD INPUT</div><h2>Live job queue <span class="count-chip" id="queueCount">0</span></h2></div><button class="tiny-button" id="queueRefresh">↻ Sync</button></div>
+          <div class="table-scroll"><table class="jobs-table"><thead><tr><th>JOB / TASK</th><th>ARRIVAL</th><th>BURST</th><th>PRIORITY</th><th>DEADLINE</th><th></th></tr></thead><tbody id="jobsBody"><tr><td colspan="6" class="table-empty">Loading workload...</td></tr></tbody></table></div>
+          <div class="table-footer"><span id="queueFooter">Persisted locally on this machine</span><span class="priority-key"><b>1</b> = highest priority</span></div>
+        </div>
+
+        <div class="panel add-panel">
+          <div class="panel-head"><div><div class="eyebrow">NEW WORKLOAD</div><h2>Add a job</h2></div><span class="add-plus">＋</span></div>
+          <form id="jobForm" class="job-form">
+            <div class="form-field full-field"><label for="jobName">TASK NAME</label><input id="jobName" name="name" type="text" maxlength="45" placeholder="e.g. Image processing" required></div>
+            <div class="form-field"><label for="arrival">ARRIVAL TIME</label><input id="arrival" name="arrival" type="number" min="0" max="100000" value="0" required></div>
+            <div class="form-field"><label for="burst">CPU BURST</label><input id="burst" name="burst" type="number" min="1" max="10000" value="5" required></div>
+            <div class="form-field"><label for="priority">PRIORITY (1-10)</label><input id="priority" name="priority" type="number" min="1" max="10" value="3" required></div>
+            <div class="form-field"><label for="deadline">DEADLINE</label><input id="deadline" name="deadline" type="number" min="0" max="200000" value="20" required></div>
+            <button class="btn btn-add" type="submit"><span>＋</span> Add to queue</button>
+          </form>
+          <div class="form-note"><span>i</span> Jobs are saved automatically in <code>data/jobs.csv</code>.</div>
+        </div>
+      </section>
+
+      <section class="lower-grid results-grid">
+        <div class="panel result-panel">
+          <div class="panel-head"><div><div class="eyebrow">PER-JOB ANALYSIS</div><h2>Execution results</h2></div><span class="panel-index">02 / METRICS</span></div>
+          <div class="table-scroll"><table class="results-table"><thead><tr><th>JOB</th><th>START</th><th>COMPLETE</th><th>WAIT</th><th>TURNAROUND</th><th>RESPONSE</th></tr></thead><tbody id="resultsBody"><tr><td colspan="6" class="table-empty">Run a schedule to calculate per-job metrics.</td></tr></tbody></table></div>
+        </div>
+        <div class="panel benchmark-panel" id="benchmark">
+          <div class="panel-head"><div><div class="eyebrow">POLICY COMPARISON</div><h2>Benchmark lab</h2></div><span class="benchmark-icon">⌁</span></div>
+          <p class="benchmark-copy">Run all six algorithms against the same workload and compare average waiting time.</p>
+          <button class="btn btn-benchmark" id="benchmarkBtn">Compare all algorithms <span>→</span></button>
+          <div id="benchmarkResults" class="benchmark-results"><div class="benchmark-placeholder">Your comparison will appear here.</div></div>
+          <div class="benchmark-foot">Lower average waiting time is better. Other goals may favor different policies.</div>
+        </div>
+      </section>
+
+      <footer class="footer"><span>© 2026 SCHEDULR SYSTEMS LAB</span><span>Built with <b>C</b> · HTML · CSS · JavaScript</span><span>Academic mini project / AOS</span></footer>
+    </main>
+  </div>
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

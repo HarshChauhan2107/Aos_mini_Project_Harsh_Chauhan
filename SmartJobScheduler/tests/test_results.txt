@@ -1,0 +1,32 @@
+[PASS] C backend health endpoint
+[PASS] seven seeded jobs are loaded
+[PASS] root dashboard route responds with the interface
+[PASS] FCFS returns seven per-job results
+[PASS] FCFS average metrics match reference values
+[PASS] FCFS returns a valid Gantt timeline
+[PASS] SJF returns seven per-job results
+[PASS] SJF average metrics match reference values
+[PASS] SJF returns a valid Gantt timeline
+[PASS] SRTF returns seven per-job results
+[PASS] SRTF average metrics match reference values
+[PASS] SRTF returns a valid Gantt timeline
+[PASS] PRIORITY returns seven per-job results
+[PASS] PRIORITY average metrics match reference values
+[PASS] PRIORITY returns a valid Gantt timeline
+[PASS] RR returns seven per-job results
+[PASS] RR average metrics match reference values
+[PASS] RR returns a valid Gantt timeline
+[PASS] EDF returns seven per-job results
+[PASS] EDF average metrics match reference values
+[PASS] EDF returns a valid Gantt timeline
+[PASS] adaptive recommendation returns a supported algorithm
+[PASS] job can be added
+[PASS] added job is visible in the persisted queue
+[PASS] job can be removed
+[PASS] invalid job values are rejected with HTTP 400
+[PASS] delayed-arrival edge case can be created
+[PASS] idle gap is included correctly in makespan and CPU utilization
+[PASS] Gantt timeline explicitly displays a CPU idle segment
+[PASS] demo data is restored at test completion
+
+RESULT: 30 checks passed. Port: 8099.
