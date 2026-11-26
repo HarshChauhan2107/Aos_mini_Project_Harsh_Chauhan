@@ -1,9 +1,0 @@
-id,name,arrival,burst,priority,deadline
-1,API Gateway,0,7,2,16
-2,Payment Worker,2,4,1,12
-3,Notification Hub,4,3,3,14
-4,Analytics Batch,5,8,4,28
-5,Cache Refresh,6,2,2,11
-6,Report Builder,8,5,3,22
-7,Backup Agent,10,4,5,30
-8,image processing,2,5,3,20
