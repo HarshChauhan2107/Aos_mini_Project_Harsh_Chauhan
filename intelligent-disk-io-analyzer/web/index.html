@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
+  <title>DiskScope | Intelligent Disk I/O Scheduling Analyzer</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="DiskScope home">
+      <span class="brand-mark">D<span>↗</span></span>
+      <span><strong>DiskScope</strong><small>ADVANCED OS LAB</small></span>
+    </a>
+    <div class="topbar-right">
+      <span class="live-dot"></span><span class="server-label" id="serverStatus">Connecting to C engine…</span>
+      <span class="version-pill">C BACKEND · v1.0</span>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> OPERATING SYSTEMS · STORAGE MANAGEMENT</div>
+        <h1>Intelligent Disk I/O<br><span>Scheduling Analyzer</span></h1>
+        <p class="hero-subtitle">Simulate disk-head movement, compare scheduling strategies, and understand seek performance through a live interactive lab.</p>
+        <div class="hero-tags"><span>6 scheduling algorithms</span><span>Live seek analysis</span><span>Visual simulation</span></div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+        <div class="disk-core"><span class="core-ring"></span><span class="core-dot"></span><b>IO</b></div>
+        <div class="orbit-node node-a">FCFS</div><div class="orbit-node node-b">SSTF</div><div class="orbit-node node-c">SCAN</div>
+        <div class="visual-caption">HEAD MOVEMENT<br><strong>SIMULATOR</strong></div>
+      </div>
+    </section>
+
+    <section class="workspace-grid">
+      <aside class="panel input-panel">
+        <div class="panel-heading">
+          <div><div class="section-kicker">CONFIGURATION</div><h2>Simulation setup</h2></div>
+          <span class="step-badge">01</span>
+        </div>
+        <p class="panel-description">Set the disk geometry, initial head position, and pending I/O requests.</p>
+
+        <form id="simForm">
+          <div class="field-grid">
+            <label class="field"><span>Initial head position</span><input type="number" id="head" value="53" required></label>
+            <label class="field"><span>Disk minimum</span><input type="number" id="diskMin" value="0" required></label>
+            <label class="field"><span>Disk maximum</span><input type="number" id="diskMax" value="199" required></label>
+            <label class="field"><span>Initial direction</span>
+              <select id="direction"><option value="right">→ Right</option><option value="left">← Left</option></select>
+            </label>
+          </div>
+
+          <div class="field queue-field">
+            <div class="field-label-row"><label for="requests">Disk request queue</label><span id="requestCount">8 requests</span></div>
+            <textarea id="requests" rows="3" spellcheck="false" required>98, 183, 37, 122, 14, 124, 65, 67</textarea>
+            <small>Enter cylinder numbers separated by commas. Maximum 128 requests.</small>
+          </div>
+
+          <div class="field">
+            <span class="field-title">Algorithm to analyze</span>
+            <select id="algorithm">
+              <option value="ALL">Compare all 6 algorithms</option>
+              <option value="FCFS">FCFS · First Come First Serve</option>
+              <option value="SSTF">SSTF · Shortest Seek Time First</option>
+              <option value="SCAN">SCAN · Elevator Algorithm</option>
+              <option value="C-SCAN">C-SCAN · Circular SCAN</option>
+              <option value="LOOK">LOOK</option>
+              <option value="C-LOOK">C-LOOK · Circular LOOK</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button class="btn btn-primary" type="submit" id="analyzeBtn"><span class="play-icon">▶</span> Run analysis</button>
+            <button class="btn btn-quiet" type="button" id="sampleBtn">Load sample</button>
+          </div>
+          <div class="button-row secondary-actions">
+            <button class="text-action" type="button" id="randomBtn">✦ Generate random queue</button>
+            <button class="text-action muted-action" type="button" id="clearBtn">Clear inputs</button>
+          </div>
+          <div id="errorBox" class="error-box" role="alert" hidden></div>
+        </form>
+        <div class="input-note"><span class="note-icon">i</span><p><strong>Tip</strong> — Use “Compare all 6 algorithms” to identify the strategy with the least total head movement for your queue.</p></div>
+      </aside>
+
+      <section class="panel results-panel" aria-live="polite">
+        <div class="panel-heading result-heading">
+          <div><div class="section-kicker">SIMULATION OUTPUT</div><h2>Performance overview</h2></div>
+          <span class="step-badge">02</span>
+        </div>
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon"><span>⌁</span></div>
+          <h3>Ready when you are</h3>
+          <p>Configure the disk request queue and run the simulation to see scheduling results here.</p>
+          <div class="empty-mini-stats"><span>01&nbsp; Input</span><i></i><span>02&nbsp; Simulate</span><i></i><span>03&nbsp; Compare</span></div>
+        </div>
+        <div id="resultsContent" hidden>
+          <div class="metric-grid">
+            <article class="metric-card metric-featured"><div class="metric-label">BEST ALGORITHM <span>✦</span></div><div class="metric-value" id="bestAlgorithm">—</div><div class="metric-foot" id="bestFoot">Lowest total head movement</div></article>
+            <article class="metric-card"><div class="metric-label">TOTAL MOVEMENT</div><div class="metric-value"><span id="totalMovement">—</span><small>cylinders</small></div><div class="metric-foot">Selected algorithm</div></article>
+            <article class="metric-card"><div class="metric-label">AVERAGE SEEK</div><div class="metric-value"><span id="averageSeek">—</span><small>cyl / request</small></div><div class="metric-foot">Movement ÷ requests</div></article>
+            <article class="metric-card"><div class="metric-label">REQUESTS SERVED</div><div class="metric-value"><span id="servedCount">—</span><small id="servedTotal">/ —</small></div><div class="metric-foot">Queue completed</div></article>
+          </div>
+
+          <div class="comparison-block">
+            <div class="subsection-heading"><div><h3>Algorithm comparison</h3><p>Lower total movement generally means less head travel.</p></div><span class="mini-tag">LIVE RESULTS</span></div>
+            <div class="table-wrap">
+              <table class="comparison-table">
+                <thead><tr><th>ALGORITHM</th><th>TOTAL MOVEMENT</th><th>AVG. SEEK</th><th>VISUAL</th></tr></thead>
+                <tbody id="comparisonRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="detail-block">
+            <div class="subsection-heading detail-heading"><div><h3>Seek path visualization</h3><p id="pathSubtitle">Head movement from the initial cylinder.</p></div>
+              <select id="detailAlgorithm" class="compact-select" aria-label="Algorithm details"></select>
+            </div>
+            <div class="chart-card"><canvas id="pathChart" height="210" aria-label="Disk head movement chart"></canvas><div class="chart-legend"><span><i class="legend-head"></i> Head position</span><span><i class="legend-service"></i> Request served</span><span><i class="legend-wrap"></i> Wrap / boundary</span></div></div>
+            <div class="sequence-card"><div class="sequence-top"><span>HEAD MOVEMENT SEQUENCE</span><span id="movementCount">—</span></div><div id="sequence" class="sequence-flow"></div></div>
+            <div class="steps-wrap"><div class="steps-title">Movement breakdown</div><div class="table-wrap"><table class="steps-table"><thead><tr><th>STEP</th><th>FROM</th><th>TO</th><th>DISTANCE</th><th>TYPE</th></tr></thead><tbody id="stepRows"></tbody></table></div></div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="algorithm-section">
+      <div class="section-kicker">BUILT-IN SCHEDULERS</div>
+      <div class="algorithm-title-row"><div><h2>Six ways to schedule disk I/O</h2><p>Explore the policy behind each simulation.</p></div><span class="algorithm-count">06 <small>ALGORITHMS</small></span></div>
+      <div class="algorithm-grid">
+        <article class="algorithm-card"><div class="algo-number">01</div><h3>FCFS</h3><p>Services requests in the exact order in which they arrive. Simple and fair, but can cause large head movements.</p><span class="complexity">TIME · O(n)</span></article>
+        <article class="algorithm-card"><div class="algo-number">02</div><h3>SSTF</h3><p>Selects the pending request closest to the current head position. Often reduces movement but may cause starvation.</p><span class="complexity">TIME · O(n²)</span></article>
+        <article class="algorithm-card"><div class="algo-number">03</div><h3>SCAN</h3><p>The head travels in one direction to the disk boundary, then reverses to service requests on the other side.</p><span class="complexity">TIME · O(n log n)</span></article>
+        <article class="algorithm-card"><div class="algo-number">04</div><h3>C-SCAN</h3><p>Services requests in one direction only, then returns to the opposite end to begin another sweep.</p><span class="complexity">TIME · O(n log n)</span></article>
+        <article class="algorithm-card"><div class="algo-number">05</div><h3>LOOK</h3><p>Works like SCAN but reverses at the last pending request instead of travelling to the physical disk boundary.</p><span class="complexity">TIME · O(n log n)</span></article>
+        <article class="algorithm-card"><div class="algo-number">06</div><h3>C-LOOK</h3><p>Works like C-SCAN but jumps between the furthest pending requests rather than visiting disk boundaries.</p><span class="complexity">TIME · O(n log n)</span></article>
+      </div>
+    </section>
+
+    <footer class="footer"><div class="footer-brand"><span class="brand-mark small-mark">D<span>↗</span></span><strong>DiskScope</strong></div><p>Advanced Operating Systems · Mini Project</p><p class="footer-credit">Scheduling engine written in C · Interactive web interface</p></footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
